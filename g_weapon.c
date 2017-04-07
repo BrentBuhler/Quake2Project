@@ -1,5 +1,6 @@
 #include "g_local.h"
-
+//ADDED
+static void Grenade_Explode(edict_t *ent);
 
 /*
 =================
@@ -350,9 +351,15 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	bolt->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
 	bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
 	bolt->owner = self;
+	//ADDED
 	bolt->touch = blaster_touch;
-	bolt->nextthink = level.time + 2;
-	bolt->think = G_FreeEdict;
+	
+	//self->speed = 50.0f;
+	
+	bolt->nextthink = level.time + 100;//bolt->nextthink = level.time + 2;
+	
+	bolt->think = Grenade_Explode;//bolt->think = G_FreeEdict;
+	//
 	bolt->dmg = damage;
 	bolt->classname = "bolt";
 	if (hyper)
