@@ -1160,6 +1160,10 @@ void PutClientInServer (edict_t *ent)
 	ent->watertype = 0;
 	ent->flags &= ~FL_NO_KNOCKBACK;
 	ent->svflags &= ~SVF_DEADMONSTER;
+	//ADDED
+	ent->poison_damage = 0;
+	ent->poison_level = 0;
+	//ADDED
 
 	VectorCopy (mins, ent->mins);
 	VectorCopy (maxs, ent->maxs);
@@ -1564,6 +1568,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	edict_t	*other;
 	int		i, j;
 	pmove_t	pm;
+	//ADDED
+	vec3_t zero = { 0,0,0 };
+	//ADDED
 
 	level.current_entity = ent;
 	client = ent->client;
@@ -1732,6 +1739,22 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+
+	//ADDED
+	if (ent->poison_level > 0)
+	{
+		if (ent->poison_step <= 0)
+		{
+			T_Damage(ent, ent->poisoner, ent->poisoner, zero, ent->s.origin, zero, ent->poison_damage, 0, 0, 0);
+			ent->poison_level--; ent->poison_step = 10;
+		}
+		else
+		{
+			ent->poison_step--;
+		}
+		
+	}
+	//ADDED
 }
 
 
