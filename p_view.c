@@ -943,6 +943,10 @@ void ClientEndServerFrame (edict_t *ent)
 
 	current_player = ent;
 	current_client = ent->client;
+	//ADDED
+	if (ent->client->modifier == 0.0f)
+		ent->client->modifier = 1.0f;
+	//ADDED
 
 	//
 	// If the origin or velocity have changed since ClientThink(),

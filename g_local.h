@@ -868,6 +868,7 @@ struct gclient_s
 	// private to game
 	//ADDED
 	qboolean switched;
+	float modifier;
 	//ADDED
 	client_persistant_t	pers;
 	client_respawn_t	resp;

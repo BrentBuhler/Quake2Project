@@ -880,6 +880,35 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+//ADDED
+void Cmd_ModifierUp_f(edict_t *ent)
+{
+	ent->client->modifier += 0.01f;
+	if (ent->client->modifier > 1.1f)
+	{
+		ent->client->modifier = 1.1f;
+		gi.bprintf(PRINT_MEDIUM, "MAX SPEED.\n");
+	}
+	else
+	{
+		gi.bprintf(PRINT_MEDIUM, "%f IS THE NEW SPEED.\n", ent->client->modifier);
+	}
+}
+
+void Cmd_ModifierDown_f(edict_t *ent)
+{
+	ent->client->modifier -= 0.01f;
+	if (ent->client->modifier < 0.9f)
+	{
+		ent->client->modifier = 0.9f;
+		gi.bprintf(PRINT_MEDIUM, "MIN SPEED.\n");
+	}
+	else
+	{
+		gi.bprintf(PRINT_MEDIUM, "%f IS THE NEW SPEED.\n", ent->client->modifier);
+	}
+}
+//ADDED
 
 /*
 =================
@@ -968,6 +997,12 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	//ADDED
+	else if (Q_stricmp(cmd, "modifierup") == 0)
+		Cmd_ModifierUp_f(ent);
+	else if (Q_stricmp(cmd, "modifierdown") == 0)
+		Cmd_ModifierDown_f(ent);
+	//ADDED
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

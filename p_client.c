@@ -978,6 +978,7 @@ void respawn (edict_t *self)
 		self->client->respawn_time = level.time;
 		//ADDED
 		self->client->switched = false;
+		self->client->modifier = 1.0f;
 		//ADDED
 
 		return;
@@ -1592,9 +1593,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	} else {
 
 		//ADDED
-		gi.bprintf(PRINT_MEDIUM, "%f HEY.\n", ent->velocity[0]);
-		ent->velocity[0] = ent->velocity[0]*1.01;
-		ent->velocity[1] = ent->velocity[1]*1.01;
+		//gi.bprintf(PRINT_MEDIUM, "%f HEY.\n", ent->velocity[0]);
+		ent->velocity[0] = ent->velocity[0]*ent->client->modifier;
+		ent->velocity[1] = ent->velocity[1]* ent->client->modifier;
 		//ADDED
 
 		// set up for pmove
