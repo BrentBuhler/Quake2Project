@@ -976,6 +976,9 @@ void respawn (edict_t *self)
 		self->client->ps.pmove.pm_time = 14;
 
 		self->client->respawn_time = level.time;
+		//ADDED
+		self->client->switched = false;
+		//ADDED
 
 		return;
 	}
@@ -1587,6 +1590,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->resp.cmd_angles[2] = SHORT2ANGLE(ucmd->angles[2]);
 
 	} else {
+
+		//ADDED
+		gi.bprintf(PRINT_MEDIUM, "%f HEY.\n", ent->velocity[0]);
+		ent->velocity[0] = ent->velocity[0]*1.01;
+		ent->velocity[1] = ent->velocity[1]*1.01;
+		//ADDED
 
 		// set up for pmove
 		memset (&pm, 0, sizeof(pm));

@@ -866,6 +866,9 @@ struct gclient_s
 	int				ping;
 
 	// private to game
+	//ADDED
+	qboolean switched;
+	//ADDED
 	client_persistant_t	pers;
 	client_respawn_t	resp;
 	pmove_state_t		old_pmove;	// for detecting out-of-pmove changes

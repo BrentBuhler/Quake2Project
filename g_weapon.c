@@ -1,7 +1,7 @@
 #include "g_local.h"
 //ADDED
 static void Grenade_Explode(edict_t *ent);
-
+void rocket_touch(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
 /*
 =================
 check_dodge
@@ -486,7 +486,10 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 	VectorMA (grenade->velocity, 200 + crandom() * 10.0, up, grenade->velocity);
 	VectorMA (grenade->velocity, crandom() * 10.0, right, grenade->velocity);
 	VectorSet (grenade->avelocity, 300, 300, 300);
-	grenade->movetype = MOVETYPE_BOUNCE;
+	//ADDED
+	grenade->movetype = MOVETYPE_FLYMISSILE;
+	//grenade->movetype = MOVETYPE_BOUNCE;
+	//ADDED
 	grenade->clipmask = MASK_SHOT;
 	grenade->solid = SOLID_BBOX;
 	grenade->s.effects |= EF_GRENADE;
@@ -494,8 +497,10 @@ void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 	VectorClear (grenade->maxs);
 	grenade->s.modelindex = gi.modelindex ("models/objects/grenade/tris.md2");
 	grenade->owner = self;
-	grenade->touch = Grenade_Touch;
-	grenade->nextthink = level.time + timer;
+	//ADDED
+	grenade->touch = rocket_touch; //grenade->touch = Grenade_Touch;
+	//ADDED
+	grenade->nextthink = level.time + timer;	
 	grenade->think = Grenade_Explode;
 	grenade->dmg = damage;
 	grenade->dmg_radius = damage_radius;

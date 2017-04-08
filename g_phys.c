@@ -53,7 +53,6 @@ SV_CheckVelocity
 void SV_CheckVelocity (edict_t *ent)
 {
 	int		i;
-
 //
 // bound velocity
 //

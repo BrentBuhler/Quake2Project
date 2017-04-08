@@ -545,7 +545,9 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	timer = ent->client->grenade_time - level.time;
 	speed = GRENADE_MINSPEED + (GRENADE_TIMER - timer) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
 	fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
-
+	//ADDED
+	fire_grenade2(ent, right, forward, damage, speed, timer, radius, held);
+	//ADDED
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 
@@ -705,9 +707,10 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
-
+	//ADDED
+	//fire_grenade(ent, start, forward, damage, 1800, 1.0, radius);
 	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
-
+	//ADDED
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
 	gi.WriteByte (MZ_GRENADE | is_silenced);
@@ -810,7 +813,13 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 	//ADDED
-	fire_blaster(ent, start, forward, damage, 1000, effect, hyper);//fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	ent->velocity[0] = -2000.0f * forward[0];
+	ent->velocity[1] = -2000.0f * forward[1];
+	ent->velocity[2] = -2000.0f * forward[2];
+
+	
+	//gi.bprintf(PRINT_MEDIUM, "%i HEY.\n", ent->movetype);
+	fire_blaster(ent, start, forward, damage, 100, effect, hyper);//fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
 	//ADDED
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -992,8 +1001,10 @@ void Machinegun_Fire (edict_t *ent)
 	AngleVectors (angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
-
+	//ADDED
+	//fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	fire_rocket(ent, start, forward, damage, 650, 15.0f, 5);
+	//ADDED
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
 	gi.WriteByte (MZ_MACHINEGUN | is_silenced);
@@ -1189,12 +1200,35 @@ void weapon_shotgun_fire (edict_t *ent)
 		damage *= 4;
 		kick *= 4;
 	}
-
+	//ADDED
 	if (deathmatch->value)
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+	{
+		if (ent->client->switched == true)
+		{
+			fire_shotgun(ent, start, forward, damage, kick, 50, 5000, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_WATER);//MOD_SHOTGUN fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+			ent->client->switched = false;
+		}
+		else if (ent->client->switched == false)
+		{
+			fire_shotgun(ent, start, forward, damage, kick, 5000, 50, DEFAULT_SHOTGUN_COUNT, MOD_WATER);//ADDED fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+			ent->client->switched = true;
+		}
+	}
+		
 	else
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
-
+	{
+		if (ent->client->switched == true)
+		{
+			fire_shotgun(ent, start, forward, damage, kick, 50, 5000, DEFAULT_SHOTGUN_COUNT, MOD_WATER);//ADDED fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+			ent->client->switched = false;
+		}
+		else if (ent->client->switched == false)
+		{
+			fire_shotgun(ent, start, forward, damage, kick, 5000, 50, DEFAULT_SHOTGUN_COUNT, MOD_WATER);//ADDED fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+			ent->client->switched = true;
+		}	
+	}		
+	//ADDED
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
