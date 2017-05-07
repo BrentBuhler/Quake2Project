@@ -204,7 +204,19 @@ static void fire_lead (edict_t *self, vec3_t start, vec3_t aimdir, int damage, i
 		{
 			if (tr.ent->takedamage)
 			{
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
+				//ADDED
+				if(self->client && self->client->massiveDamage)
+					T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage*20, kick, DAMAGE_BULLET, mod);
+				else
+					T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
+				
+				if (self->client && (self->client->lifeSteal || self->client->survival))
+				{
+					self->health += damage/2;
+					if (self->health > 100)
+						self->health = 100;
+				}
+				//ADDED
 			}
 			else
 			{
@@ -307,7 +319,19 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 			mod = MOD_HYPERBLASTER;
 		else
 			mod = MOD_BLASTER;
-		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, mod);
+		//ADDED
+		if (self->client && self->client->massiveDamage)
+			T_Damage(other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg * 20, 1, DAMAGE_ENERGY, mod);
+		else
+			T_Damage(other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, mod);
+
+		if (self->client && (self->client->lifeSteal || self->client->survival))
+		{
+			self->health += self->dmg / 2;
+			if (self->health > 100)
+				self->health = 100;
+		}
+		//ADDED
 	}
 	else
 	{
@@ -581,7 +605,19 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 
 	if (other->takedamage)
 	{
-		T_Damage (other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg, 0, 0, MOD_ROCKET);
+		//ADDED
+		if (ent->client && ent->client->massiveDamage)
+			T_Damage(other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg * 20, 0, 0, MOD_ROCKET);
+		else
+			T_Damage(other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg, 0, 0, MOD_ROCKET);
+
+		if (ent->client && (ent->client->lifeSteal || ent->client->survival))
+		{
+			ent->health += ent->dmg / 2;
+			if (ent->health > 100)
+				ent->health = 100;
+		}
+		//ADDED
 	}
 	else
 	{
@@ -633,7 +669,19 @@ void rocket_touch2(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 
 	if (other->takedamage)
 	{
-		T_Damage(other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg, 0, 0, MOD_ROCKET);
+		//ADDED
+		if (ent->client && ent->client->massiveDamage)
+			T_Damage(other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg * 20, 0, 0, MOD_ROCKET);
+		else
+			T_Damage(other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg, 0, 0, MOD_ROCKET);
+
+		if (ent->client && (ent->client->lifeSteal || ent->client->survival))
+		{
+			ent->health += ent->dmg / 2;
+			if (ent->health > 100)
+				ent->health = 100;
+		}
+		//ADDED
 	}
 	else
 	{
@@ -747,7 +795,21 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 				ignore = NULL;
 
 			if ((tr.ent != self) && (tr.ent->takedamage))
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+			{
+				//ADDED
+				if (self->client && self->client->massiveDamage)
+					T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage * 20, kick, 0, MOD_RAILGUN);
+				else
+					T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+
+				if (self->client && (self->client->lifeSteal || self->client->survival))
+				{
+					self->health += self->dmg / 2;
+					if (self->health > 100)
+						self->health = 100;
+				}
+				//ADDED
+			}
 		}
 
 		VectorCopy (tr.endpos, from);

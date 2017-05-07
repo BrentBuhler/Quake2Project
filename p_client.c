@@ -1594,8 +1594,42 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 		//ADDED
 		//gi.bprintf(PRINT_MEDIUM, "%f HEY.\n", ent->velocity[0]);
+
 		ent->velocity[0] = ent->velocity[0]*ent->client->modifier;
 		ent->velocity[1] = ent->velocity[1]* ent->client->modifier;
+
+		if (ent->client->drunk == true)
+		{
+			ent->velocity[0] = ent->velocity[0] + crandom() * 90;
+			ent->velocity[1] = ent->velocity[1] + crandom() * 90;
+		}
+
+		if (ent->client->regen == true && ent->health != 100)
+		{
+			if (ent->client->counter == NULL)
+				ent->client->counter = 0;
+			if (ent->client->counter >= 50)
+			{
+				ent->health++;
+				ent->client->counter = 0;
+			}
+			else
+				ent->client->counter++;
+				
+		}
+
+		if (ent->client->survival == true)
+		{
+			if (ent->client->counter == NULL)
+				ent->client->counter = 0;
+			if (ent->client->counter >= 50)
+			{
+				ent->health--;
+				ent->client->counter = 0;
+			}
+			else
+				ent->client->counter++;
+		}
 
 		if (ent->client->fired == true && ent->client->ball)
 		{

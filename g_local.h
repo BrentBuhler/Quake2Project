@@ -871,6 +871,14 @@ struct gclient_s
 	float modifier;
 	qboolean fired;
 	edict_t* ball;
+
+	qboolean drunk;
+	qboolean regen;
+	qboolean lifeSteal;
+	qboolean survival;
+	qboolean massiveDamage;
+
+	int counter;
 	//ADDED
 	client_persistant_t	pers;
 	client_respawn_t	resp;
