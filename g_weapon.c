@@ -610,6 +610,70 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 	G_FreeEdict (ent);
 }
 
+//ADDED
+void rocket_touch2(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	vec3_t		origin;
+	int			n;
+
+	if (other == ent->owner)
+		return;
+
+	if (surf && (surf->flags & SURF_SKY))
+	{
+		G_FreeEdict(ent);
+		return;
+	}
+
+	if (ent->owner->client)
+		PlayerNoise(ent->owner, ent->s.origin, PNOISE_IMPACT);
+
+	// calculate position for the explosion entity
+	VectorMA(ent->s.origin, -0.02, ent->velocity, origin);
+
+	if (other->takedamage)
+	{
+		T_Damage(other, ent, ent->owner, ent->velocity, ent->s.origin, plane->normal, ent->dmg, 0, 0, MOD_ROCKET);
+	}
+	else
+	{
+		// don't throw any debris in net games
+		if (!deathmatch->value && !coop->value)
+		{
+			if ((surf) && !(surf->flags & (SURF_WARP | SURF_TRANS33 | SURF_TRANS66 | SURF_FLOWING)))
+			{
+				n = rand() % 5;
+				while (n--)
+					ThrowDebris(ent, "models/objects/debris2/tris.md2", 2, ent->s.origin);
+			}
+		}
+	}
+
+	T_RadiusDamage(ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_R_SPLASH);
+
+	gi.WriteByte(svc_temp_entity);
+	if (ent->waterlevel)
+		gi.WriteByte(TE_ROCKET_EXPLOSION_WATER);
+	else
+		gi.WriteByte(TE_ROCKET_EXPLOSION);
+	gi.WritePosition(origin);
+	gi.multicast(ent->s.origin, MULTICAST_PHS);
+
+	if(ent)
+		fire_grenade(ent,origin,origin,origin,50,1.5f,20.0f);
+
+	origin[0] += 25;
+	if (ent)
+		fire_grenade(ent, origin, origin, origin, 50, 1.5f, 20.0f);
+
+	origin[0] += 25;
+	if (ent)
+		fire_grenade(ent, origin, origin, origin, 50, 1.5f, 20.0f);
+	if (ent)
+		G_FreeEdict(ent);
+}
+//ADDED
+
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
 {
 	edict_t	*rocket;
@@ -627,7 +691,9 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	VectorClear (rocket->maxs);
 	rocket->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	rocket->owner = self;
-	rocket->touch = rocket_touch;
+	//ADDED
+	rocket->touch = rocket_touch2;
+	//ADDED
 	rocket->nextthink = level.time + 8000/speed;
 	rocket->think = G_FreeEdict;
 	rocket->dmg = damage;
@@ -705,6 +771,12 @@ void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick
 
 	if (self->client)
 		PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
+
+	//ADDED
+	self->s.origin[0] = tr.endpos[0];
+	self->s.origin[1] = tr.endpos[1];
+	self->s.origin[2] = tr.endpos[2];
+	//ADDED
 }
 
 
@@ -877,8 +949,9 @@ void bfg_think (edict_t *self)
 void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius)
 {
 	edict_t	*bfg;
-
 	bfg = G_Spawn();
+	self->client->fired = true;
+	self->client->ball = bfg;
 	VectorCopy (start, bfg->s.origin);
 	VectorCopy (dir, bfg->movedir);
 	vectoangles (dir, bfg->s.angles);

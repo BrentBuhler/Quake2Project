@@ -764,7 +764,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	fire_rocket(ent, start, forward, damage, 650, damage_radius, radius_damage);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1127,8 +1127,9 @@ void Chaingun_Fire (edict_t *ent)
 
 	for (i=0 ; i<3 ; i++)
 	{
-		ent->client->kick_origin[i] = crandom() * 0.35;
-		ent->client->kick_angles[i] = crandom() * 0.7;
+		//ADDED
+		ent->client->kick_origin[i] = crandom() * 0.95;// 0.35;
+		ent->client->kick_angles[i] = crandom() * 0.99;//0.7;
 	}
 
 	for (i=0 ; i<shots ; i++)
@@ -1139,8 +1140,9 @@ void Chaingun_Fire (edict_t *ent)
 		u = crandom()*4;
 		VectorSet(offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-
-		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
+		//ADDED (chaingun mod)
+		fire_bullet (ent, start, forward, damage, kick, 15, 15, MOD_RAILGUN);//fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_RAILGUN);
+		fire_shotgun(ent, start, forward, damage, kick, 50, 5000, DEFAULT_SHOTGUN_COUNT, MOD_WATER);
 	}
 
 	// send muzzle flash
@@ -1278,10 +1280,31 @@ void weapon_supershotgun_fire (edict_t *ent)
 	v[YAW]   = ent->client->v_angle[YAW] - 5;
 	v[ROLL]  = ent->client->v_angle[ROLL];
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	//ADDED
+	//fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	//fire_rail(ent, start, forward, damage, kick);
 	v[YAW]   = ent->client->v_angle[YAW] + 5;
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	//fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	offset[2] -= 15;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	offset[0] += 25;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	offset[0] -= 50;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	offset[0] += 100;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	offset[0] += 25;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	offset[0] += 25;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	offset[0] += 25;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	offset[0] += 25;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	offset[0] += 25;
+	Blaster_Fire(ent, offset, damage, true, 0);
+	//ADDED
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);

@@ -1596,6 +1596,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		//gi.bprintf(PRINT_MEDIUM, "%f HEY.\n", ent->velocity[0]);
 		ent->velocity[0] = ent->velocity[0]*ent->client->modifier;
 		ent->velocity[1] = ent->velocity[1]* ent->client->modifier;
+
+		if (ent->client->fired == true && ent->client->ball)
+		{
+			VectorCopy (ent->velocity, ent->client->ball->velocity);
+		}
+		else
+		{
+			ent->client->fired = false;
+		}
+
 		//ADDED
 
 		// set up for pmove

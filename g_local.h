@@ -869,6 +869,8 @@ struct gclient_s
 	//ADDED
 	qboolean switched;
 	float modifier;
+	qboolean fired;
+	edict_t* ball;
 	//ADDED
 	client_persistant_t	pers;
 	client_respawn_t	resp;
